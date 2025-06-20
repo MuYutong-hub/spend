@@ -3,465 +3,656 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>动词大冒险 - Cost, Spend, Pay, Take</title>
+    <title>英语动词时态游戏</title>
     <style>
-        /* 统一字体设置 */
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        /* [之前的CSS样式保持不变] */
+        
+        /* 新增拼图游戏样式 */
+        #puzzleGame {
+            display: none;
+            width: 100%;
+            height: 80vh;
+            position: relative;
             background-color: #f0f8ff;
-            margin: 0;
+            border-radius: 10px;
             padding: 20px;
-            color: #333;
-            background-image: url('https://img.freepik.com/free-vector/hand-drawn-school-background_23-2149464866.jpg');
-            background-size: cover;
-            font-size: 16px;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            line-height: 1.5;
-        }
-        
-        /* 标题字体 */
-        h1, h2, h3 {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            font-weight: 600;
-        }
-        
-        h1 {
-            color: #ff6b6b;
+            box-sizing: border-box;
             text-align: center;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-            background-color: rgba(255, 255, 255, 0.8);
-            padding: 15px;
+        }
+        
+        .puzzle-container {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 30px;
+        }
+        
+        .sentence-puzzle {
+            width: 45%;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .drag-words {
+            width: 45%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .draggable-word {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            margin: 5px;
             border-radius: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            font-size: 1.5rem;
+            cursor: grab;
+            user-select: none;
+            min-width: 100px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            transition: transform 0.2s;
         }
         
-        /* 卡片内容字体 */
-        .verb-title, .example, .description, .quiz-result, .game-card {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        .draggable-word:hover {
+            transform: scale(1.05);
         }
         
-        .verb-title {
-            font-weight: 600;
-            font-size: 1.3rem;
-            color: #4d96ff;
-            margin-bottom: 10px;
+        .draggable-word:active {
+            cursor: grabbing;
+        }
+        
+        .drop-area {
+            border-bottom: 2px dashed #3498db;
+            min-width: 60px;
+            display: inline-block;
+            padding: 2px 5px;
+            margin: 0 5px;
+            height: 30px;
             text-align: center;
         }
         
-        .example {
-            font-style: italic;
-            font-size: 1rem;
-            font-weight: 500;
+        .drop-area.highlight {
+            background-color: #ffe0b2;
         }
         
-        .description {
-            font-size: 0.95rem;
-            font-weight: 400;
+        .puzzle-score {
+            font-size: 20px;
+            margin-top: 20px;
         }
         
-        /* 按钮字体 */
-        .quiz-button, .game-button, .quiz-options button {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            font-weight: 500;
+        .puzzle-timer {
+            font-size: 20px;
+            margin-top: 10px;
+            color: #e74c3c;
         }
         
-        /* 游戏卡片字体 */
-        .game-card {
-            font-size: 1.1rem;
-            font-weight: 500;
+        #playPuzzleBtn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            margin-top: 20px;
         }
         
-        /* 移动端适配 - 只调整布局，不改变字体 */
-        @media (max-width: 768px) {
-            * {
-                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, Roboto, "Helvetica Neue", Arial, sans-serif !important;
-                -webkit-font-smoothing: antialiased !important;
-                -moz-osx-font-smoothing: grayscale !important;
-            }
-            body {
-                padding: 10px;
-            }
-            .verb-card {
-                width: 100%;
-                max-width: 300px;
-            }
-            #game-board {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            .game-card {
-                height: 70px;
-                font-size: 1rem;
-            }
+        #puzzleHintBtn {
+            background-color: #f39c12;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            margin-top: 20px;
+            margin-left: 10px;
         }
     </style>
 </head>
 <body>
-    <h1>🚀 动词大冒险 - Cost, Spend, Pay, Take</h1>
-    <p style="text-align: center; font-size: 18px; background-color: rgba(255, 255, 255, 0.8); padding: 10px; border-radius: 10px;">
-        点击卡片学习，然后完成挑战！
-    </p>
-
-    <div class="verb-container">
-        <!-- Cost Card -->
-        <div class="verb-card" onclick="toggleCard(this, event); playSound('click')">
-            <div class="emoji">💰</div>
-            <div class="verb-title">Cost</div>
-            <div class="example">"This toy costs $10."</div>
-            <div class="hidden-content">
-                <div class="description">
-                    <strong>用法：</strong> "cost" 表示某物"花费多少钱"，主语是物品。<br><br>
-                    <strong>例句：</strong>
-                    <ul>
-                        <li>This phone costs a lot!</li>
-                        <li>How much does it cost?</li>
-                    </ul>
-                    <button onclick="playSound('cost'); event.stopPropagation();" style="background-color: #ffcc00; margin-top: 10px;">🔊 听发音</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Spend Card -->
-        <div class="verb-card" onclick="toggleCard(this, event); playSound('click')">
-            <div class="emoji">💸</div>
-            <div class="verb-title">Spend</div>
-            <div class="example">"I spend $5 on candy."</div>
-            <div class="hidden-content">
-                <div class="description">
-                    <strong>用法：</strong> "spend" 表示人"花钱或时间"，主语是人。<br><br>
-                    <strong>例句：</strong>
-                    <ul>
-                        <li>She spends too much on clothes.</li>
-                        <li>I spend 2 hours doing homework.</li>
-                    </ul>
-                    <button onclick="playSound('spend'); event.stopPropagation();" style="background-color: #ffcc00; margin-top: 10px;">🔊 听发音</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Pay Card -->
-        <div class="verb-card" onclick="toggleCard(this, event); playSound('click')">
-            <div class="emoji">💳</div>
-            <div class="verb-title">Pay</div>
-            <div class="example">"I pay $20 for the book."</div>
-            <div class="hidden-content">
-                <div class="description">
-                    <strong>用法：</strong> "pay" 表示"支付"，对象可以是钱或人。<br><br>
-                    <strong>例句：</strong>
-                    <ul>
-                        <li>Can you pay me back next week?</li>
-                        <li>He paid $50 for the shoes.</li>
-                    </ul>
-                    <button onclick="playSound('pay'); event.stopPropagation();" style="background-color: #ffcc00; margin-top: 10px;">🔊 听发音</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Take Card -->
-        <div class="verb-card" onclick="toggleCard(this, event); playSound('click')">
-            <div class="emoji">⏳</div>
-            <div class="verb-title">Take</div>
-            <div class="example">"It takes 1 hour to go there."</div>
-            <div class="hidden-content">
-                <div class="description">
-                    <strong>用法：</strong> "take" 指"花费时间"，主语常是活动。<br><br>
-                    <strong>例句：</strong>
-                    <ul>
-                        <li>It takes 5 minutes to walk to school.</li>
-                        <li>Learning English takes time.</li>
-                    </ul>
-                    <button onclick="playSound('take'); event.stopPropagation();" style="background-color: #ffcc00; margin-top: 10px;">🔊 听发音</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="progress-bar">
-        <div id="progress"></div>
-    </div>
-
-    <button class="quiz-button" onclick="startQuiz(); playSound('click')">📝 挑战小测验</button>
-    <button class="game-button" onclick="startGame(); playSound('click')">🎮 记忆配对游戏</button>
-
-    <div id="quiz-section">
-        <h3 style="color: #4d96ff; text-align: center;">📝 动词小测验</h3>
-        <p style="text-align: center;">完成3道题获得金币奖励！</p>
+    <div class="container">
+        <header>
+            <div class="character">🏃</div>
+            <h1>动词冒险岛：Lay vs. Lie</h1>
+            <p>通过有趣游戏掌握动词变化！</p>
+        </header>
         
-        <div class="quiz-question">
-            <p>1. This hamburger ____ $5.</p>
-            <div class="quiz-options">
-                <button onclick="checkAnswer(1, 'cost'); playSound('click')">cost</button>
-                <button onclick="checkAnswer(1, 'spend'); playSound('click')">spend</button>
-                <button onclick="checkAnswer(1, 'pay'); playSound('click')">pay</button>
-                <button onclick="checkAnswer(1, 'take'); playSound('click')">take</button>
+        <section class="intro" id="introSection">
+            <h2>为什么这些句子错了？</h2>
+            <p>"I <strong>layed</strong> on the bed yesterday" - 哪里有问题？</p>
+            <p>"The hen <strong>lied</strong> an egg" - 正确吗？</p>
+            <p>通过三个刺激的游戏学习正确用法！</p>
+            
+            <div class="btn-group">
+                <button class="btn btn-secondary" onclick="showRules()">游戏规则</button>
+                <button class="btn btn-accent" onclick="startGame(1)">开始冒险</button>
             </div>
-            <div id="quiz-result1" class="quiz-result"></div>
-        </div>
-
-        <div class="quiz-question">
-            <p>2. I always ____ one hour reading every night.</p>
-            <div class="quiz-options">
-                <button onclick="checkAnswer(2, 'cost'); playSound('click')">cost</button>
-                <button onclick="checkAnswer(2, 'spend'); playSound('click')">spend</button>
-                <button onclick="checkAnswer(2, 'pay'); playSound('click')">pay</button>
-                <button onclick="checkAnswer(2, 'take'); playSound('click')">take</button>
+        </section>
+        
+        <!-- 动词跑酷游戏 -->
+        <section class="game-section" id="parkourGame">
+            <h3 class="game-title">🏃 动词跑酷</h3>
+            <p>跳起来收集正确的动词形式！避开错误答案！</p>
+            
+            <div class="parkour-track"></div>
+            <div class="parkour-character" id="parkourCharacter"></div>
+            <div class="parkour-score" id="parkourScore">得分: 0</div>
+            
+            <div class="btn-group">
+                <button class="btn btn-secondary" onclick="showParkourHint()">提示</button>
+                <button class="btn" onclick="startParkourGame()">开始游戏</button>
+                <button class="btn btn-accent" onclick="startGame(2)">下一关</button>
             </div>
-            <div id="quiz-result2" class="quiz-result"></div>
-        </div>
-
-        <div class="quiz-question">
-            <p>3. Did you ____ for your lunch yet?</p>
-            <div class="quiz-options">
-                <button onclick="checkAnswer(3, 'cost'); playSound('click')">cost</button>
-                <button onclick="checkAnswer(3, 'spend'); playSound('click')">spend</button>
-                <button onclick="checkAnswer(3, 'pay'); playSound('click')">pay</button>
-                <button onclick="checkAnswer(3, 'take'); playSound('click')">take</button>
+        </section>
+        
+        <!-- 拼图游戏部分 -->
+        <div id="puzzleGame" class="game-section">
+            <h2>动词拼图</h2>
+            <div class="puzzle-container">
+                <div class="sentence-puzzle">
+                    <h3>把正确的动词拖到句子中的空白处</h3>
+                    <div class="sentence" id="puzzleSentence1">
+                        The cat has <span class="drop-area" id="drop1"></span> on the sofa all day.
+                    </div>
+                    <div class="sentence" id="puzzleSentence2">
+                        Yesterday, she <span class="drop-area" id="drop2"></span> the table with a beautiful cloth.
+                    </div>
+                    <div class="sentence" id="puzzleSentence3">
+                        The books have <span class="drop-area" id="drop3"></span> on the shelf for months.
+                    </div>
+                    <div class="sentence" id="puzzleSentence4">
+                        He <span class="drop-area" id="drop4"></span> to me about his age last week.
+                    </div>
+                </div>
+                <div class="drag-words">
+                    <h3>可拖动单词</h3>
+                    <div class="draggable-word" draggable="true" id="word-lain">lain</div>
+                    <div class="draggable-word" draggable="true" id="word-lay">lay</div>
+                    <div class="draggable-word" draggable="true" id="word-laid">laid</div>
+                    <div class="draggable-word" draggable="true" id="word-lied">lied</div>
+                    <div class="draggable-word" draggable="true" id="word-laying">laying</div>
+                    <div class="draggable-word" draggable="true" id="word-lying">lying</div>
+                </div>
             </div>
-            <div id="quiz-result3" class="quiz-result"></div>
+            <div class="puzzle-score">得分: <span id="puzzleScore">0</span></div>
+            <div class="puzzle-timer">时间: <span id="puzzleTimer">60</span></div>
+            <button id="playPuzzleBtn" onclick="startPuzzleGame()">开始游戏</button>
+            <button id="puzzleHintBtn" onclick="showPuzzleHint()">游戏提示</button>
         </div>
-
-        <div id="quiz-summary" style="text-align: center; font-size: 18px;"></div>
+        
+        <!-- 作文医生游戏 -->
+        <section class="game-section" id="doctorGame">
+            <h3 class="game-title">🩺 作文医生</h3>
+            <p>找出句子中的错误并改正它们！</p>
+            
+            <div class="sentence">
+                The books are <span class="highlight" onclick="showOptions(1)">laying</span> on the table since morning.
+            </div>
+            
+            <div class="sentence">
+                She <span class="highlight" onclick="showOptions(2)">laid</span> in bed until noon yesterday.
+            </div>
+            
+            <div class="sentence">
+                I have <span class="highlight" onclick="showOptions(3)">lain</span> the baby in the crib carefully.
+            </div>
+            
+            <div id="optionsContainer" style="display: none;">
+                <p>选择正确的动词:</p>
+                <div class="options" id="sentenceOptions"></div>
+            </div>
+            
+            <div class="btn-group">
+                <button class="btn" onclick="checkDoctorAnswers()">检查答案</button>
+                <button class="btn btn-accent" onclick="showReward()">完成冒险</button>
+            </div>
+        </section>
+        
+        <!-- 奖励部分 -->
+        <section class="game-section reward" id="rewardSection" style="display: none;">
+            <div class="trophy">🏆</div>
+            <h2>恭喜你完成了冒险！</h2>
+            <p>你现在是<strong>Lay vs. Lie</strong>的小专家了！</p>
+            <p id="scoreText">你的得分: 0/100</p>
+            
+            <div class="progress-container">
+                <div class="progress-bar" id="rewardProgress"></div>
+            </div>
+            
+            <button class="btn btn-large" onclick="location.reload()">再玩一次</button>
+        </section>
     </div>
 
-    <div id="game-section">
-        <h3 style="color: #4d96ff;">🎮 动词记忆配对游戏</h3>
-        <p>找出所有配对的动词和例句！</p>
-        <div id="score-display">得分: 0</div>
-        <div id="game-board"></div>
-        <button onclick="resetGame(); playSound('click')" style="background-color: #4d96ff; color: white; border: none; padding: 10px 15px; border-radius: 20px; cursor: pointer; margin-top: 10px;">重新开始</button>
-    </div>
-
-    <audio id="click-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-arcade-game-jump-coin-216.mp3"></audio>
-    <audio id="correct-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-tone-2870.mp3"></audio>
-    <audio id="wrong-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-fail-notification-946.mp3"></audio>
-    <audio id="win-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-achievement-bell-600.mp3"></audio>
-    <audio id="celebration-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-happy-crowd-cheer-964.mp3"></audio>
-    <audio id="cost-sound" src="https://ssl.gstatic.com/dictionary/static/sounds/20200429/cost--_gb_1.mp3"></audio>
-    <audio id="spend-sound" src="https://ssl.gstatic.com/dictionary/static/sounds/20200429/spend--_gb_1.mp3"></audio>
-    <audio id="pay-sound" src="https://ssl.gstatic.com/dictionary/static/sounds/20200429/pay--_gb_1.mp3"></audio>
-    <audio id="take-sound" src="https://ssl.gstatic.com/dictionary/static/sounds/20200429/take--_gb_1.mp3"></audio>
-
+    <!-- 音效 -->
+    <audio id="correctSound" src="https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-tone-2870.mp3"></audio>
+    <audio id="wrongSound" src="https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-fail-notification-946.mp3"></audio>
+    <audio id="winSound" src="https://assets.mixkit.co/sfx/preview/mixkit-achievement-bell-600.mp3"></audio>
+    <audio id="clickSound" src="https://assets.mixkit.co/sfx/preview/mixkit-arcade-game-jump-coin-216.mp3"></audio>
+    <audio id="jumpSound" src="https://assets.mixkit.co/sfx/preview/mixkit-quick-jump-arcade-game-239.mp3"></audio>
+    <audio id="shootSound" src="https://assets.mixkit.co/sfx/preview/mixkit-short-laser-gun-shot-1670.mp3"></audio>
+    <audio id="swishSound" src="https://assets.mixkit.co/sfx/preview/mixkit-basketball-ball-bouncing-2081.mp3"></audio>
+    
     <script>
-        // 音效播放
+        // 游戏状态
+        let currentGame = 0;
+        let score = 0;
+        let parkourScore = 0;
+        let puzzleScore = 0;
+        let puzzleTimer = 60;
+        let puzzleGameInterval;
+        let puzzleCorrectAnswers = 0;
+        let doctorAnswers = {};
+        
+        // 动词跑酷游戏变量
+        let parkourGameInterval;
+        let parkourObstacles = [];
+        let isParkourJumping = false;
+        const parkourCorrectWords = ['lay', 'laid', 'lain'];
+        const parkourWrongWords = ['lied', 'layed', 'lained'];
+        
+        // 篮球游戏变量
+        let basketballGameInterval;
+        let isBallMoving = false;
+        let currentBasketWord = "";
+        let basketPosition = 50;
+        const basketballWords = [
+            { word: "lay", correct: true },
+            { word: "laid", correct: true },
+            { word: "lain", correct: true },
+            { word: "lied", correct: false },
+            { word: "layed", correct: false },
+            { word: "lained", correct: false }
+        ];
+
+        // 动词跑酷游戏 - 改进的跳跃功能
+        function startParkourGame() {
+            playSound('click');
+            document.getElementById('parkourScore').textContent = '得分: 0';
+            parkourScore = 0;
+            parkourObstacles = [];
+            document.querySelectorAll('.parkour-obstacle').forEach(el => el.remove());
+            
+            // 减慢障碍物生成速度
+            parkourGameInterval = setInterval(createParkourObstacle, 2000);
+            
+            document.addEventListener('keydown', handleParkourJump);
+            document.getElementById('parkourGame').addEventListener('click', handleParkourJump);
+            
+            setTimeout(() => {
+                clearInterval(parkourGameInterval);
+                document.removeEventListener('keydown', handleParkourJump);
+                document.getElementById('parkourGame').removeEventListener('click', handleParkourJump);
+                score += Math.min(30, Math.floor(parkourScore / 2));
+                alert(`游戏结束！你的得分: ${parkourScore}\n获得${Math.min(30, Math.floor(parkourScore / 2))}分`);
+            }, 30000);
+        }
+
+        function createParkourObstacle() {
+            const isCorrect = Math.random() > 0.5;
+            const word = isCorrect ? 
+                parkourCorrectWords[Math.floor(Math.random() * parkourCorrectWords.length)] :
+                parkourWrongWords[Math.floor(Math.random() * parkourWrongWords.length)];
+            
+            const obstacle = document.createElement('div');
+            obstacle.className = 'parkour-obstacle';
+            obstacle.textContent = word;
+            obstacle.dataset.word = word;
+            obstacle.dataset.correct = isCorrect;
+            obstacle.style.right = '-100px';
+            
+            document.getElementById('parkourGame').appendChild(obstacle);
+            parkourObstacles.push(obstacle);
+            
+            let position = -100;
+            const moveInterval = setInterval(() => {
+                position += 5;
+                obstacle.style.right = `${position}px`;
+                
+                // 检测碰撞
+                const character = document.getElementById('parkourCharacter');
+                const charRect = character.getBoundingClientRect();
+                const obstRect = obstacle.getBoundingClientRect();
+                
+                if (
+                    charRect.left < obstRect.right &&
+                    charRect.right > obstRect.left &&
+                    charRect.top < obstRect.bottom &&
+                    charRect.bottom > obstRect.top
+                ) {
+                    clearInterval(moveInterval);
+                    obstacle.remove();
+                    
+                    if (obstacle.dataset.correct === 'true') {
+                        playSound('correct');
+                        parkourScore += 10;
+                        document.getElementById('parkourScore').textContent = `得分: ${parkourScore}`;
+                    } else {
+                        playSound('wrong');
+                        parkourScore = Math.max(0, parkourScore - 5);
+                        document.getElementById('parkourScore').textContent = `得分: ${parkourScore}`;
+                    }
+                }
+                
+                // 移出屏幕
+                if (position > window.innerWidth) {
+                    clearInterval(moveInterval);
+                    obstacle.remove();
+                }
+            }, 20);
+        }
+
+        function handleParkourJump() {
+            if (isParkourJumping) return;
+            
+            isParkourJumping = true;
+            playSound('jump');
+            const character = document.getElementById('parkourCharacter');
+            character.classList.add('jump');
+            
+            setTimeout(() => {
+                character.classList.remove('jump');
+                isParkourJumping = false;
+            }, 2400); // 延长跳跃时间
+        }
+
+        // 拼图游戏实现
+        function startPuzzleGame() {
+            playSound('click');
+            puzzleScore = 0;
+            puzzleTimer = 60;
+            puzzleCorrectAnswers = 0;
+            document.getElementById('puzzleScore').textContent = '0';
+            document.getElementById('puzzleTimer').textContent = '60';
+            
+            // 重置所有drop区域
+            document.querySelectorAll('.drop-area').forEach(drop => {
+                drop.innerHTML = '';
+                drop.dataset.word = '';
+            });
+            
+            // 设置拖拽事件
+            setupDragAndDrop();
+            
+            // 启动计时器
+            puzzleGameInterval = setInterval(updatePuzzleGame, 1000);
+        }
+        
+        function setupDragAndDrop() {
+            const draggables = document.querySelectorAll('.draggable-word');
+            const dropAreas = document.querySelectorAll('.drop-area');
+            
+            draggables.forEach(draggable => {
+                draggable.addEventListener('dragstart', (e) => {
+                    e.dataTransfer.setData('text/plain', draggable.id);
+                    setTimeout(() => {
+                        draggable.style.display = 'none';
+                    }, 0);
+                });
+                
+                draggable.addEventListener('dragend', () => {
+                    draggable.style.display = 'block';
+                });
+            });
+            
+            dropAreas.forEach(area => {
+                area.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    area.classList.add('highlight');
+                });
+                
+                area.addEventListener('dragleave', () => {
+                    area.classList.remove('highlight');
+                });
+                
+                area.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    area.classList.remove('highlight');
+                    
+                    const id = e.dataTransfer.getData('text/plain');
+                    const draggable = document.getElementById(id);
+                    const word = draggable.textContent;
+                    const correctAnswer = getCorrectAnswer(area.id);
+                    
+                    // 检查是否已经有单词在这个drop区域
+                    if (area.dataset.word) {
+                        playSound('wrong');
+                        return;
+                    }
+                    
+                    area.textContent = word;
+                    area.dataset.word = word;
+                    
+                    if (word === correctAnswer) {
+                        playSound('correct');
+                        puzzleScore += 10;
+                        puzzleCorrectAnswers++;
+                        area.style.borderBottom = '2px solid #4CAF50';
+                    } else {
+                        playSound('wrong');
+                        puzzleScore = Math.max(0, puzzleScore - 5);
+                        area.style.borderBottom = '2px solid #f44336';
+                    }
+                    
+                    document.getElementById('puzzleScore').textContent = puzzleScore;
+                    
+                    // 检查游戏是否完成
+                    if (puzzleCorrectAnswers === 4) {
+                        clearInterval(puzzleGameInterval);
+                        score += Math.min(30, Math.floor(puzzleScore / 2));
+                        setTimeout(() => {
+                            alert(`恭喜！你完成了所有拼图！\n你的得分: ${puzzleScore}\n获得${Math.min(30, Math.floor(puzzleScore / 2))}分`);
+                        }, 500);
+                    }
+                    
+                    draggable.style.display = 'block';
+                });
+            });
+        }
+        
+        function getCorrectAnswer(dropId) {
+            switch(dropId) {
+                case 'drop1': return 'lain';    // The cat has lain on the sofa all day.
+                case 'drop2': return 'laid';    // Yesterday, she laid the table with a beautiful cloth.
+                case 'drop3': return 'lain';    // The books have lain on the shelf for months.
+                case 'drop4': return 'lied';    // He lied to me about his age last week.
+                default: return '';
+            }
+        }
+        
+        function updatePuzzleGame() {
+            puzzleTimer--;
+            document.getElementById('puzzleTimer').textContent = puzzleTimer;
+            
+            if (puzzleTimer <= 0) {
+                clearInterval(puzzleGameInterval);
+                score += Math.min(30, Math.floor(puzzleScore / 2));
+                alert(`时间到！你的得分: ${puzzleScore}\n获得${Math.min(30, Math.floor(puzzleScore / 2))}分`);
+            }
+        }
+        
+        function showPuzzleHint() {
+            playSound('click');
+            alert("游戏提示：\n\n" +
+                "拖动正确的动词形式到句子空白处：\n" +
+                "1. lie → lay → lain (不及物动词，意思为\"躺\")\n" +  // 使用反斜杠转义内部双引号
+                "2. lay → laid → laid (及物动词，意思为\"放置\")\n\n" +  // 同样处理这里
+                "每填对一个正确答案得10分，错误答案扣5分\n" +
+                "完成所有4个句子或时间用完游戏结束");
+        }
+
+
+        // 作文医生游戏
+        const doctorQuestions = [
+            {
+                sentence: "The books are <span class='highlight' onclick='showOptions(1)'>laying</span> on the table since morning.",
+                correct: "lying",
+                options: ["laying", "lying", "lieing", "laid"]
+            },
+            {
+                sentence: "She <span class='highlight' onclick='showOptions(2)'>laid</span> in bed until noon yesterday.",
+                correct: "lay",
+                options: ["laid", "lay", "lied", "lain"]
+            },
+            {
+                sentence: "I have <span class='highlight' onclick='showOptions(3)'>lain</span> the baby in the crib carefully.",
+                correct: "laid",
+                options: ["lain", "laid", "lay", "lied"]
+            }
+        ];
+
+        function showOptions(questionNum) {
+            playSound('click');
+            currentDoctorQuestion = questionNum - 1;
+            const question = doctorQuestions[currentDoctorQuestion];
+            const optionsContainer = document.getElementById('optionsContainer');
+            const optionsDiv = document.getElementById('sentenceOptions');
+            
+            optionsDiv.innerHTML = '';
+            question.options.forEach(option => {
+                const optionElement = document.createElement('div');
+                optionElement.className = 'option';
+                optionElement.textContent = option;
+                optionElement.onclick = () => selectDoctorOption(option);
+                optionsDiv.appendChild(optionElement);
+            });
+            
+            optionsContainer.style.display = 'block';
+        }
+
+        function selectDoctorOption(option) {
+            playSound('click');
+            doctorAnswers[currentDoctorQuestion] = option;
+            document.getElementById('optionsContainer').style.display = 'none';
+            
+            // 更新句子显示
+            const question = doctorQuestions[currentDoctorQuestion];
+            const sentences = document.querySelectorAll('.sentence');
+            sentences[currentDoctorQuestion].innerHTML = question.sentence.replace(
+                /<span class='highlight' onclick='showOptions\(\d\)'>.*?<\/span>/,
+                `<span class="highlight" style="background-color: ${option === question.correct ? '#8BC34A' : '#FF5252'}" onclick="showOptions(${currentDoctorQuestion + 1})">${option}</span>`
+            );
+        }
+
+        function checkDoctorAnswers() {
+            let allCorrect = true;
+            let correctCount = 0;
+            
+            doctorQuestions.forEach((question, index) => {
+                if (doctorAnswers[index] === question.correct) {
+                    correctCount++;
+                } else {
+                    allCorrect = false;
+                }
+            });
+            
+            if (allCorrect) {
+                playSound('win');
+                score += 40;
+                alert('完美！你找到了所有错误！');
+            } else {
+                playSound(correctCount > 0 ? 'correct' : 'wrong');
+                alert(`你纠正了 ${correctCount} 处错误中的 ${doctorQuestions.length} 处。`);
+            }
+        }
+
+        // 更新游戏流程控制
+        function startGame(gameNum) {
+            playSound('click');
+            document.querySelectorAll('.game-section').forEach(section => {
+                section.style.display = 'none';
+            });
+            
+            currentGame = gameNum;
+            
+            switch(gameNum) {
+                case 1:
+                    document.getElementById('parkourGame').style.display = 'block';
+                    break;
+                case 2:
+                    document.getElementById('puzzleGame').style.display = 'block';
+                    document.getElementById('playPuzzleBtn').click(); // 自动开始游戏
+                    break;
+                case 3:
+                    document.getElementById('doctorGame').style.display = 'block';
+                    // 重置句子显示
+                    const sentencesContainer = document.querySelectorAll('.sentence');
+                    doctorQuestions.forEach((question, index) => {
+                        sentencesContainer[index].innerHTML = question.sentence;
+                    });
+                    break;
+            }
+        }
+
+        function showReward() {
+            playSound('win');
+            document.getElementById('rewardSection').style.display = 'block';
+            document.getElementById('doctorGame').style.display = 'none';
+            document.getElementById('scoreText').textContent = `你的得分: ${score}/100`;
+            document.getElementById('rewardProgress').style.width = `${score}%`;
+            
+            // 庆祝效果
+            if (score >= 80) {
+                createConfetti();
+            }
+        }
+
+        function showRules() {
+            playSound('click');
+            alert(`游戏规则：
+1. 🏃 动词跑酷：跳起来收集正确的动词形式，避开错误答案
+2. 🏀 动词投篮：选择正确的动词投篮得分
+3. 🩺 作文医生：找出并改正句子中的错误
+
+每关都有分数，总分达到80分以上有特别奖励！`);
+        }
+
+        function showParkourHint() {
+            playSound('click');
+            alert("游戏提示：\n\n" +
+                 "跳起来收集正确的动词形式：\n" +
+                 "lie → lay → lain\n" +
+                 "lay → laid → laid\n\n" +
+                 "避开错误形式如：lied, layed, lained\n\n" +
+                 "每收集一个正确答案得10分，碰到错误答案扣5分");
+        }
+
+        function showBasketballHint() {
+            playSound('click');
+            alert("游戏提示：\n\n" +
+                 "选择正确的动词形式投篮：\n" +
+                 "lie, lay, laid, lain\n\n" +
+                 "避开错误形式如：lied, layed, lained\n\n" +
+                 "每投中一个正确答案得10分，投中错误答案扣5分");
+        }
+
+        // 工具函数
         function playSound(type) {
-            const sound = document.getElementById(`${type}-sound`);
+            const sound = document.getElementById(`${type}Sound`);
             if (sound) {
                 sound.currentTime = 0;
                 sound.play();
             }
         }
 
-        // 点击展开卡片
-        function toggleCard(card, event) {
-            // 检查点击是否来自发音按钮
-            if (event && event.target.tagName === 'BUTTON' && event.target.textContent.includes('🔊')) {
-                return; // 如果是发音按钮点击，不切换卡片状态
-            }
-            card.classList.toggle("active");
-        }
-
-        // 测验相关变量
-        let quizScore = 0;
-        let gameScore = 0;
-        let progress = 0;
-        const totalTasks = 2; // 测验和游戏两个任务
-
-        // 开始测验
-        function startQuiz() {
-            document.getElementById("quiz-section").style.display = "block";
-            document.getElementById("game-section").style.display = "none";
-            resetQuiz();
-        }
-
-        // 重置测验
-        function resetQuiz() {
-            quizScore = 0;
-            document.querySelectorAll(".quiz-result").forEach(el => {
-                el.innerHTML = "";
-                el.className = "quiz-result";
-            });
-            document.getElementById("quiz-summary").innerHTML = "";
-        }
-
-        // 检查答案
-        function checkAnswer(questionNum, chosenAnswer) {
-            const correctAnswers = {
-                1: "cost",
-                2: "spend",
-                3: "pay"
-            };
-
-            const resultElement = document.getElementById(`quiz-result${questionNum}`);
-            if (chosenAnswer === correctAnswers[questionNum]) {
-                resultElement.innerHTML = "✅ 答对了！";
-                resultElement.className = "quiz-result correct";
-                quizScore++;
-                playSound('correct');
-                
-                // 检查是否所有问题都答对了
-                if (quizScore === 3) {
-                    document.getElementById("quiz-summary").innerHTML = "🎉 太棒了！你全部答对了！获得50金币！";
-                    playSound('win');
-                    updateProgress();
-                    createConfetti();
-                }
-            } else {
-                let explanation = "";
-                switch (correctAnswers[questionNum]) {
-                    case "cost":
-                        explanation = "❌ 不对哦！'cost' 是说东西值多少钱。";
-                        break;
-                    case "spend":
-                        explanation = "❌ 不对哦！'spend' 是人花时间或钱。";
-                        break;
-                    case "pay":
-                        explanation = "❌ 不对哦！'pay' 是付款的意思。";
-                        break;
-                }
-                resultElement.innerHTML = `${explanation}`;
-                resultElement.className = "quiz-result incorrect";
-                playSound('wrong');
-            }
-        }
-
-        // 记忆游戏相关
-        const gamePairs = [
-            { word: "cost", example: "This costs $10" },
-            { word: "spend", example: "I spend time" },
-            { word: "pay", example: "Pay for lunch" },
-            { word: "take", example: "It takes time" }
-        ];
-        
-        let gameCards = [];
-        let flippedCards = [];
-        let matchedPairs = 0;
-
-        // 开始游戏
-        function startGame() {
-            document.getElementById("game-section").style.display = "block";
-            document.getElementById("quiz-section").style.display = "none";
-            resetGame();
-        }
-
-        // 重置游戏
-        function resetGame() {
-            gameScore = 0;
-            matchedPairs = 0;
-            document.getElementById("score-display").textContent = "得分: 0";
-            
-            // 创建游戏卡片
-            gameCards = [];
-            const allPairs = [...gamePairs, ...gamePairs]; // 复制一份用于配对
-            allPairs.sort(() => Math.random() - 0.5); // 随机排序
-            
-            const gameBoard = document.getElementById("game-board");
-            gameBoard.innerHTML = "";
-            
-            allPairs.forEach((pair, index) => {
-                const card = document.createElement("div");
-                card.className = "game-card";
-                card.dataset.index = index;
-                card.dataset.word = pair.word;
-                card.dataset.example = pair.example;
-                card.addEventListener("click", flipCard);
-                gameBoard.appendChild(card);
-                gameCards.push({
-                    element: card,
-                    word: pair.word,
-                    example: pair.example,
-                    flipped: false,
-                    matched: false
-                });
-            });
-        }
-
-        // 翻转卡片
-        function flipCard() {
-            const index = this.dataset.index;
-            const card = gameCards[index];
-            
-            // 如果卡片已经翻开或已匹配，则不做任何操作
-            if (card.flipped || card.matched || flippedCards.length >= 2) {
-                return;
-            }
-            
-            // 翻开卡片
-            card.flipped = true;
-            this.textContent = card.word === card.example ? card.word : card.example;
-            this.classList.add("flipped");
-            flippedCards.push(card);
-            playSound('click');
-            
-            // 检查是否匹配
-            if (flippedCards.length === 2) {
-                const card1 = flippedCards[0];
-                const card2 = flippedCards[1];
-                
-                // 检查是否匹配（单词配例句）
-                if ((card1.word === card2.word && card1.example === card2.example) || 
-                    (card1.word === card2.example || card1.example === card2.word)) {
-                    // 匹配成功
-                    setTimeout(() => {
-                        card1.matched = true;
-                        card2.matched = true;
-                        card1.element.style.visibility = "hidden";
-                        card2.element.style.visibility = "hidden";
-                        flippedCards = [];
-                        matchedPairs++;
-                        gameScore += 10;
-                        document.getElementById("score-display").textContent = `得分: ${gameScore}`;
-                        playSound('correct');
-                        
-                        // 检查游戏是否结束
-                        if (matchedPairs === gamePairs.length) {
-                            document.getElementById("score-display").textContent += " 🎉 恭喜完成！获得30金币！";
-                            playSound('celebration');
-                            updateProgress();
-                            createConfetti();
-                        }
-                    }, 500);
-                } else {
-                    // 不匹配
-                    setTimeout(() => {
-                        card1.flipped = false;
-                        card2.flipped = false;
-                        card1.element.textContent = "";
-                        card2.element.textContent = "";
-                        card1.element.classList.remove("flipped");
-                        card2.element.classList.remove("flipped");
-                        flippedCards = [];
-                        playSound('wrong');
-                    }, 1000);
-                }
-            }
-        }
-
-        // 更新进度条
-        function updateProgress() {
-            progress += 50; // 每个任务完成增加50%
-            if (progress > 100) progress = 100;
-            document.getElementById("progress").style.width = `${progress}%`;
-            
-            if (progress === 100) {
-                document.getElementById("progress").classList.add("task-completed");
-                setTimeout(() => {
-                    alert("🏆 恭喜你完成了所有挑战！你是动词小专家！");
-                }, 1000);
-            }
-        }
-
-        // 创建庆祝彩花
         function createConfetti() {
+            const colors = ['#ff9e3f', '#6ecff6', '#ff6b6b', '#8bc34a', '#ffd700'];
+            
             for (let i = 0; i < 50; i++) {
-                const confetti = document.createElement("div");
-                confetti.className = "confetti";
+                const confetti = document.createElement('div');
+                confetti.style.position = 'fixed';
+                confetti.style.width = '10px';
+                confetti.style.height = '10px';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.borderRadius = '50%';
                 confetti.style.left = `${Math.random() * 100}vw`;
-                confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
-                confetti.style.animationDuration = `${Math.random() * 2 + 1}s`;
+                confetti.style.top = '-10px';
+                confetti.style.zIndex = '1000';
+                confetti.style.animation = 'confetti 3s linear forwards';
                 document.body.appendChild(confetti);
                 
-                // 移除彩花元素
                 setTimeout(() => {
                     confetti.remove();
                 }, 3000);
