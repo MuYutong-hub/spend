@@ -6,14 +6,16 @@
     <title>动词大冒险 - Cost, Spend, Pay, Take</title>
     <style>
         body {
-            font-family: 'Comic Sans MS', cursive, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
             background-color: #f0f8ff;
             margin: 0;
             padding: 20px;
             color: #333;
             background-image: url('https://img.freepik.com/free-vector/hand-drawn-school-background_23-2149464866.jpg');
             background-size: cover;
-            font-size: 16px; /* 统一字体大小 */
+            font-size: 16px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
         h1 {
             color: #ff6b6b;
@@ -23,7 +25,8 @@
             padding: 15px;
             border-radius: 20px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            font-size: 24px; /* 确保标题大小一致 */
+            font-size: 1.5rem;
+            font-weight: 700;
         }
         .verb-container {
             display: flex;
@@ -49,15 +52,15 @@
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
         }
         .verb-title {
-            font-weight: bold;
-            font-size: 22px;
+            font-weight: 700;
+            font-size: 1.3rem;
             color: #4d96ff;
             margin-bottom: 10px;
             text-align: center;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
         }
         .emoji {
-            font-size: 30px;
+            font-size: 2rem;
             display: block;
             text-align: center;
             margin-bottom: 10px;
@@ -70,12 +73,13 @@
             padding: 8px;
             border-radius: 8px;
             border-left: 4px solid #ff6b6b;
-            font-size: 16px; /* 统一字体大小 */
+            font-size: 1rem;
+            line-height: 1.4;
         }
         .description {
             margin-top: 10px;
-            line-height: 1.4;
-            font-size: 15px;
+            line-height: 1.5;
+            font-size: 0.95rem;
         }
         .hidden-content {
             max-height: 0;
@@ -91,13 +95,13 @@
             border: none;
             padding: 12px 20px;
             border-radius: 50px;
-            font-size: 18px;
+            font-size: 1.1rem;
             cursor: pointer;
             margin: 20px auto;
             display: block;
             transition: all 0.3s;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            font-weight: bold;
+            font-weight: 600;
         }
         .quiz-button:hover, .game-button:hover {
             background-color: #ff4757;
@@ -132,19 +136,20 @@
             border-radius: 20px;
             cursor: pointer;
             transition: all 0.2s;
-            font-size: 16px;
+            font-size: 1rem;
+            font-weight: 500;
         }
         .quiz-options button:hover {
             background-color: #3a7bd5;
             transform: scale(1.05);
         }
         .quiz-result {
-            font-weight: bold;
+            font-weight: 600;
             margin-top: 10px;
             padding: 10px;
             border-radius: 5px;
             text-align: center;
-            font-size: 16px; /* 统一字体大小 */
+            font-size: 1rem;
         }
         .correct {
             background-color: #d4edda;
@@ -172,10 +177,11 @@
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 24px;
+            font-size: 1.2rem;
             cursor: pointer;
             transition: all 0.3s;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            font-weight: 500;
         }
         .game-card:hover {
             transform: scale(1.05);
@@ -184,8 +190,8 @@
             background-color: #ff6b6b;
         }
         #score-display {
-            font-size: 20px;
-            font-weight: bold;
+            font-size: 1.2rem;
+            font-weight: 700;
             color: #e67e22;
             margin-bottom: 15px;
         }
@@ -229,18 +235,32 @@
         /* 移动端适配 */
         @media (max-width: 768px) {
             body {
-                font-size: 16px; /* 保持与PC端一致的字体大小 */
                 padding: 10px;
+                font-size: 1rem;
             }
             .verb-card {
                 width: 100%;
                 max-width: 300px;
             }
-            .verb-title, .example, .description, .quiz-result {
-                font-size: 16px; /* 保持与PC端一致的字体大小 */
+            .verb-title {
+                font-size: 1.2rem;
+            }
+            .example {
+                font-size: 0.95rem;
+            }
+            .description {
+                font-size: 0.9rem;
             }
             #game-board {
                 grid-template-columns: repeat(2, 1fr);
+            }
+            .game-card {
+                height: 70px;
+                font-size: 1rem;
+            }
+            .quiz-button, .game-button {
+                font-size: 1rem;
+                padding: 10px 15px;
             }
         }
     </style>
