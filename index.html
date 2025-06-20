@@ -13,6 +13,7 @@
             color: #333;
             background-image: url('https://img.freepik.com/free-vector/hand-drawn-school-background_23-2149464866.jpg');
             background-size: cover;
+            font-size: 16px; /* 统一字体大小 */
         }
         h1 {
             color: #ff6b6b;
@@ -22,6 +23,7 @@
             padding: 15px;
             border-radius: 20px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            font-size: 24px; /* 确保标题大小一致 */
         }
         .verb-container {
             display: flex;
@@ -68,6 +70,7 @@
             padding: 8px;
             border-radius: 8px;
             border-left: 4px solid #ff6b6b;
+            font-size: 16px; /* 统一字体大小 */
         }
         .description {
             margin-top: 10px;
@@ -141,6 +144,7 @@
             padding: 10px;
             border-radius: 5px;
             text-align: center;
+            font-size: 16px; /* 统一字体大小 */
         }
         .correct {
             background-color: #d4edda;
@@ -221,97 +225,101 @@
                 transform: translateY(100vh);
             }
         }
+        
+        /* 移动端适配 */
+        @media (max-width: 768px) {
+            body {
+                font-size: 16px; /* 保持与PC端一致的字体大小 */
+                padding: 10px;
+            }
+            .verb-card {
+                width: 100%;
+                max-width: 300px;
+            }
+            .verb-title, .example, .description, .quiz-result {
+                font-size: 16px; /* 保持与PC端一致的字体大小 */
+            }
+            #game-board {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
     </style>
 </head>
 <body>
     <h1>🚀 动词大冒险 - Cost, Spend, Pay, Take</h1>
     <p style="text-align: center; font-size: 18px; background-color: rgba(255, 255, 255, 0.8); padding: 10px; border-radius: 10px;">
-        👇 点击单词卡片学习它们的用法，然后完成挑战任务！
+        点击卡片学习，然后完成挑战！
     </p>
 
     <div class="verb-container">
         <!-- Cost Card -->
-        <div class="verb-card" onclick="toggleCard(this); playSound('click')">
+        <div class="verb-card" onclick="toggleCard(this, event); playSound('click')">
             <div class="emoji">💰</div>
             <div class="verb-title">Cost</div>
             <div class="example">"This toy costs $10."</div>
             <div class="hidden-content">
                 <div class="description">
-                    <strong>用法：</strong> "cost" 表示某物"花费多少钱"，主语是物品，而不是人。<br><br>
+                    <strong>用法：</strong> "cost" 表示某物"花费多少钱"，主语是物品。<br><br>
                     <strong>例句：</strong>
                     <ul>
-                        <li>This phone costs a lot! （这部手机很贵！）</li>
-                        <li>How much does it cost? （这个多少钱？）</li>
+                        <li>This phone costs a lot!</li>
+                        <li>How much does it cost?</li>
                     </ul>
-                    <button onclick="playSound('cost')" style="background-color: #ffcc00; margin-top: 10px;">🔊 听发音</button>
+                    <button onclick="playSound('cost'); event.stopPropagation();" style="background-color: #ffcc00; margin-top: 10px;">🔊 听发音</button>
                 </div>
             </div>
         </div>
 
         <!-- Spend Card -->
-        <div class="verb-card" onclick="toggleCard(this); playSound('click')">
+        <div class="verb-card" onclick="toggleCard(this, event); playSound('click')">
             <div class="emoji">💸</div>
             <div class="verb-title">Spend</div>
             <div class="example">"I spend $5 on candy."</div>
             <div class="hidden-content">
                 <div class="description">
                     <strong>用法：</strong> "spend" 表示人"花钱或时间"，主语是人。<br><br>
-                    <strong>常见搭配：</strong>
-                    <ul>
-                        <li>spend + money + on something</li>
-                        <li>spend + time + doing something</li>
-                    </ul>
                     <strong>例句：</strong>
                     <ul>
-                        <li>She spends too much on clothes. （她买衣服花太多钱了。）</li>
-                        <li>I spend 2 hours doing homework every day. （我每天花2小时做作业。）</li>
+                        <li>She spends too much on clothes.</li>
+                        <li>I spend 2 hours doing homework.</li>
                     </ul>
-                    <button onclick="playSound('spend')" style="background-color: #ffcc00; margin-top: 10px;">🔊 听发音</button>
+                    <button onclick="playSound('spend'); event.stopPropagation();" style="background-color: #ffcc00; margin-top: 10px;">🔊 听发音</button>
                 </div>
             </div>
         </div>
 
         <!-- Pay Card -->
-        <div class="verb-card" onclick="toggleCard(this); playSound('click')">
+        <div class="verb-card" onclick="toggleCard(this, event); playSound('click')">
             <div class="emoji">💳</div>
             <div class="verb-title">Pay</div>
             <div class="example">"I pay $20 for the book."</div>
             <div class="hidden-content">
                 <div class="description">
                     <strong>用法：</strong> "pay" 表示"支付"，对象可以是钱或人。<br><br>
-                    <strong>常见搭配：</strong>
-                    <ul>
-                        <li>pay + someone + money</li>
-                        <li>pay + for + something</li>
-                    </ul>
                     <strong>例句：</strong>
                     <ul>
-                        <li>Can you pay me back next week? （你下周能还我钱吗？）</li>
-                        <li>He paid $50 for the shoes. （他花50美元买了这双鞋。）</li>
+                        <li>Can you pay me back next week?</li>
+                        <li>He paid $50 for the shoes.</li>
                     </ul>
-                    <button onclick="playSound('pay')" style="background-color: #ffcc00; margin-top: 10px;">🔊 听发音</button>
+                    <button onclick="playSound('pay'); event.stopPropagation();" style="background-color: #ffcc00; margin-top: 10px;">🔊 听发音</button>
                 </div>
             </div>
         </div>
 
         <!-- Take Card -->
-        <div class="verb-card" onclick="toggleCard(this); playSound('click')">
+        <div class="verb-card" onclick="toggleCard(this, event); playSound('click')">
             <div class="emoji">⏳</div>
             <div class="verb-title">Take</div>
             <div class="example">"It takes 1 hour to go there."</div>
             <div class="hidden-content">
                 <div class="description">
-                    <strong>用法：</strong> "take" 指"花费时间"，主语常是活动（it 形式主语）。<br><br>
-                    <strong>常见搭配：</strong>
-                    <ul>
-                        <li>It takes + time + to do something</li>
-                    </ul>
+                    <strong>用法：</strong> "take" 指"花费时间"，主语常是活动。<br><br>
                     <strong>例句：</strong>
                     <ul>
-                        <li>It takes 5 minutes to walk to school. （走路去学校要5分钟。）</li>
-                        <li>Learning English takes time. （学英语需要时间。）</li>
+                        <li>It takes 5 minutes to walk to school.</li>
+                        <li>Learning English takes time.</li>
                     </ul>
-                    <button onclick="playSound('take')" style="background-color: #ffcc00; margin-top: 10px;">🔊 听发音</button>
+                    <button onclick="playSound('take'); event.stopPropagation();" style="background-color: #ffcc00; margin-top: 10px;">🔊 听发音</button>
                 </div>
             </div>
         </div>
@@ -321,7 +329,7 @@
         <div id="progress"></div>
     </div>
 
-    <button class="quiz-button" onclick="startQuiz(); playSound('click')">📝 挑战小测验 (赢取金币!)</button>
+    <button class="quiz-button" onclick="startQuiz(); playSound('click')">📝 挑战小测验</button>
     <button class="game-button" onclick="startGame(); playSound('click')">🎮 记忆配对游戏</button>
 
     <div id="quiz-section">
@@ -393,7 +401,11 @@
         }
 
         // 点击展开卡片
-        function toggleCard(card) {
+        function toggleCard(card, event) {
+            // 检查点击是否来自发音按钮
+            if (event && event.target.tagName === 'BUTTON' && event.target.textContent.includes('🔊')) {
+                return; // 如果是发音按钮点击，不切换卡片状态
+            }
             card.classList.toggle("active");
         }
 
